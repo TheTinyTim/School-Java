@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class CelsiusAndFahrenheitConversion {
     
     public static void main (String[] args)
@@ -30,11 +28,56 @@ public class CelsiusAndFahrenheitConversion {
 //            System.out.println ("You did not enter in a valid conversion!");
 //        }
         
-//        //With table
+        //With table
+
+        //First set the starting celsius and fahrenheit variables
+        double currentCelsius = 40.0d;
+        double currentFahrenheit = 120.0d;
+
+        //Now print out the top of the table
+        System.out.println ();
+        System.out.println ("Celsius    Fahrenheit    |    Fahrenheit    Celsius");
+        //Now draw the line under it by going through a for loop based on the length of the top string
+        for (int i = 0; i < "Celsius    Fahrenheit    |    Fahrenheit    Celsius".length (); i++) {
+            System.out.printf ("-");
+        }
+
+        //Now loop 9 times getting the converted degrees for both the current celsius/fahrenheit and display them
+        for (int i = 0; i <= 9; i++) {
+
+            String firstSpaces = getSpacesBasedOnLengthCelsius (doubleToStringOneDec (currentCelsius));
+            String secondSpaces = getSpacesBasedOnLengthFahrenheit (doubleToStringOneDec (celsiusToFahrenheit (currentCelsius)));
+            String thirdSpaces = getSpacesBasedOnLengthFahrenheit (doubleToStringOneDec (currentFahrenheit));
+            //String fourthSpaces = getSpacesBasedOnLength (doubleToStringOneDec (fahrenheitToCelsius (currentFahrenheit)));
+
+            System.out.printf ("\n%1.01f°%s%1.01f°%s|    %1.01f°%s%1.01f°",
+                    currentCelsius, firstSpaces, celsiusToFahrenheit (currentCelsius), secondSpaces,
+                    currentFahrenheit, thirdSpaces, fahrenheitToCelsius (currentFahrenheit));
+
+            //Now subtract 1 from celsius
+            currentCelsius--;
+            //And 10 from fahrenheit
+            currentFahrenheit -= 10;
+        }
+    
+        System.out.println ();
+    
+//        //With table and input
 //
-//        //First set the starting celsius and fahrenheit variables
-//        double currentCelsius = 40.0d;
-//        double currentFahrenheit = 120.0d;
+//        //Initialize the Scanner
+//        Scanner input = new Scanner (System.in);
+//        //Prompt the user to put in a starting celsius value
+//        System.out.println ("Please enter in the starting value for Celsius");
+//        double currentCelsius = input.nextDouble ();
+//        //Now prompt the user to put in the starting fahrenheit value
+//        System.out.println ("Please enter in the starting value for Fahrenheit");
+//        double currentFahrenheit = input.nextDouble ();
+//        //Now prompt the user how much they want the program to loop through the number and subtract from it
+//        System.out.println ("How many times do you want me to convert the number and subtract from your starting values?");
+//        int loopNum = input.nextInt ();
+//
+//        //Now make a space to make things look neat
+//        System.out.println ("");
 //
 //        //Now print out the top of the table
 //        System.out.println ("Celsius    Fahrenheit    |    Fahrenheit    Celsius");
@@ -44,7 +87,7 @@ public class CelsiusAndFahrenheitConversion {
 //        }
 //
 //        //Now loop 9 times getting the converted degrees for both the current celsius/fahrenheit and display them
-//        for (int i = 0; i <= 9; i++) {
+//        for (int i = 0; i <= loopNum; i++) {
 //
 //            String firstSpaces = getSpacesBasedOnLengthCelsius (doubleToStringOneDec (currentCelsius));
 //            String secondSpaces = getSpacesBasedOnLengthFahrenheit (doubleToStringOneDec (celsiusToFahrenheit (currentCelsius)));
@@ -60,48 +103,6 @@ public class CelsiusAndFahrenheitConversion {
 //            //And 10 from fahrenheit
 //            currentFahrenheit -= 10;
 //        }
-    
-        //With table and input
-    
-        //Initialize the Scanner
-        Scanner input = new Scanner (System.in);
-        //Prompt the user to put in a starting celsius value
-        System.out.println ("Please enter in the starting value for Celsius");
-        double currentCelsius = input.nextDouble ();
-        //Now prompt the user to put in the starting fahrenheit value
-        System.out.println ("Please enter in the starting value for Fahrenheit");
-        double currentFahrenheit = input.nextDouble ();
-        //Now prompt the user how much they want the program to loop through the number and subtract from it
-        System.out.println ("How many times do you want me to convert the number and subtract from your starting values?");
-        int loopNum = input.nextInt ();
-        
-        //Now make a space to make things look neat
-        System.out.println ("");
-    
-        //Now print out the top of the table
-        System.out.println ("Celsius    Fahrenheit    |    Fahrenheit    Celsius");
-        //Now draw the line under it by going through a for loop based on the length of the top string
-        for (int i = 0; i < "Celsius    Fahrenheit    |    Fahrenheit    Celsius".length (); i++) {
-            System.out.printf ("-");
-        }
-    
-        //Now loop 9 times getting the converted degrees for both the current celsius/fahrenheit and display them
-        for (int i = 0; i <= loopNum; i++) {
-        
-            String firstSpaces = getSpacesBasedOnLengthCelsius (doubleToStringOneDec (currentCelsius));
-            String secondSpaces = getSpacesBasedOnLengthFahrenheit (doubleToStringOneDec (celsiusToFahrenheit (currentCelsius)));
-            String thirdSpaces = getSpacesBasedOnLengthFahrenheit (doubleToStringOneDec (currentFahrenheit));
-            //String fourthSpaces = getSpacesBasedOnLength (doubleToStringOneDec (fahrenheitToCelsius (currentFahrenheit)));
-        
-            System.out.printf ("\n%1.01f°%s%1.01f°%s|    %1.01f°%s%1.01f°",
-                    currentCelsius, firstSpaces, celsiusToFahrenheit (currentCelsius), secondSpaces,
-                    currentFahrenheit, thirdSpaces, fahrenheitToCelsius (currentFahrenheit));
-        
-            //Now subtract 1 from celsius
-            currentCelsius--;
-            //And 10 from fahrenheit
-            currentFahrenheit -= 10;
-        }
     }
     
     public static double celsiusToFahrenheit (double celsius)
