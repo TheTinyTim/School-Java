@@ -22,4 +22,7 @@ public class Food extends InventoryItem {
         this.shelfLife = shelfLife;
     }
     
+    //This method will take all the relevant data and turn it into a string and return it
+    public String toString () { return getProductID () + " " + name + " " + foodType + " " + shelfLife + " $" + price; }
+    
 }

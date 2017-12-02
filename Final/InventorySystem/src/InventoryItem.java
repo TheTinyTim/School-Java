@@ -2,12 +2,22 @@ import java.util.ArrayList;
 
 public class InventoryItem {
     
+    //Set up all the needed static variables/methods for the class
     //Create a static list to store all of the current product id's made
     private static ArrayList<String> productIDs = new ArrayList<> ();
     //Set up a setter for this array list however it will only ever be used when the program first
     //starts up and we're reading from the text file. Since the file is encrypted we shouldn't have to deal
     //with checking for duplicate IDs
     public void addProductID (String id) { productIDs.add (id); }
+    
+    //This method will make sure the product ID being created isn't currently in use with any of the other products
+    public static boolean checkIfProductIDExists (String id)
+    {
+        if (productIDs.contains (id))
+            return true;
+        else
+            return false;
+    }
     
     //Set up all the needed variables for a base inventory item
     //Strings
@@ -37,15 +47,7 @@ public class InventoryItem {
         price = productPrice;
     }
     
-    //This method will make sure the product ID being created isn't currently in use with any of the other products
-    private boolean checkIfProductIDExists (String id)
-    {
-        if (productIDs.contains (id))
-            return true;
-        else
-            return false;
-    }
-    
-    //This method will take all the
+    //This method will take all the relevant data and turn it into a string and return it
+    public String toString () { return productID + " " + name + " $" + price; }
     
 }
