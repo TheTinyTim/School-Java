@@ -1,49 +1,39 @@
-import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main extends JFrame implements KeyListener{
+public class Main {
     
     private static ArrayList<InventoryItem> inventoryItems = new ArrayList<> ();
     
     private static Scanner input;
     
-    private boolean loop = true;
+    private static boolean loop = true;
     
     public static void main (String[] args)
     {
-        //Create and start the program
-        new Main ();
-    }
+        inventoryItems = FileManagement.loadFile ();
     
-    public Main ()
-    {
-        InventoryItem item1 = new InventoryItem ("Toothbrush", "M01", 4.99);
-        Food food1 = new Food ("Banana", "F01", 2.99, "Fruit", 5);
-        Food food2 = new Food ("Bagels", "F02", 2.99, "Bread", 5);
-        Clothing clothing1 = new Clothing ("Bootcut Jeans", "C01", 39.99, "Light Blue", "28x32");
-        Clothing clothing2 = new Clothing ("Long Sleeved Shirt", "C02", 14.99, "Black", "Medium");
-    
-        inventoryItems.add (item1);
-        inventoryItems.add (food1);
-        inventoryItems.add (food2);
-        inventoryItems.add (clothing1);
-        inventoryItems.add (clothing2);
-    
-        //Let's set up the variable that will handle the users input
+//        InventoryItem item1 = new InventoryItem ("Toothbrush", "M01", 4.99);
+//        Food food1 = new Food ("Banana", "F01", 2.99, "Fruit", 5);
+//        Food food2 = new Food ("Bagels", "F02", 2.99, "Bread", 5);
+//        Clothing clothing1 = new Clothing ("Bootcut Jeans", "C01", 39.99, "Light Blue", "28x32");
+//        Clothing clothing2 = new Clothing ("Long Sleeved Shirt", "C02", 14.99, "Black", "Medium");
+//
+//        inventoryItems.add (item1);
+//        inventoryItems.add (food1);
+//        inventoryItems.add (food2);
+//        inventoryItems.add (clothing1);
+//        inventoryItems.add (clothing2);
+        
+        //Lets set up the input object
         input = new Scanner (System.in);
-    
-        //Add the key listener
-        addKeyListener (this);
     
         drawInventoryMenu ();
         drawFunctionMenu ();
     }
     
     //This method handles drawing the inventory menu of the program
-    private void drawInventoryMenu ()
+    private static void drawInventoryMenu ()
     {
         
         //First let's draw the header of the menu
@@ -106,7 +96,7 @@ public class Main extends JFrame implements KeyListener{
     }
     
     //This method will handle drawing the function menu as well as interpreting the users key presses and if they correlate to any specific program functionality
-    private void drawFunctionMenu ()
+    private static void drawFunctionMenu ()
     {
         //Fist let's draw the header of the menu
         System.out.println ("\n");
@@ -116,36 +106,34 @@ public class Main extends JFrame implements KeyListener{
         
         //Let's keep looping until we get an input from the user that actually does something
         while (loop) {
+            //Capture the users input and if it's one of the commands do the correct thing
+            System.out.print ("\nWhat would you like to do >> ");
+            String userInput = input.next ();
+            
+            //Now check to see if the user inputted an actual function
+            if (userInput.equals ("a")) {
+                //The user is trying to add an item
+            } else if (userInput.equals ("d")) {
+                //The user is trying to delete an item
+            } else if (userInput.equals ("s")) {
+                //The user is trying to search for an item
+            } else if (userInput.equals ("q")) {
+                //The user is trying to quit the program
+                FileManagement.saveData (inventoryItems);
+                loop = false;
+            } else {
+                //This is not a correct function so prompt the user and display the information again
+                System.out.println ("\n\n\n\n");
+                break;
+            }
+        }
         
+        //Check to see if the program just broke out of the loop instead of it actually ending
+        if (loop) {
+            //If it did just break the loop this means the user didn't enter in the correct command so display the menu again and tell them what went wrong
+            drawInventoryMenu ();
+            System.out.println ("\nYou didn't enter in a correct menu function!");
+            drawFunctionMenu ();
         }
     }
-    
-    //Set up all the variables needed to implement the KeyListener
-    public void keyPressed (KeyEvent event)
-    {
-        /*
-            KeyCodes (http://monkeyfighter.com/images/games/keycodes.gif):
-                a - 65
-                d - 68
-                s - 83
-                q - 81
-         */
-        
-        //Check if any of the menu keys pressed
-        if (event.getKeyCode () == 65)
-            System.out.println ("A pressed");
-        else if (event.getKeyCode () == 81)
-            loop = false;
-    }
-    
-    public void keyReleased (KeyEvent event)
-    {
-    
-    }
-    
-    public void keyTyped (KeyEvent event)
-    {
-    
-    }
-    
 }

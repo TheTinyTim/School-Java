@@ -2,7 +2,10 @@ public class Clothing extends InventoryItem {
 
     //Strings
     private String color;
+    public String getColor () { return color; }
+    
     private String size;
+    public String getSize () { return size; }
     
     public Clothing (String productName, String productID, double productPrice, String clothingColor, String clothingSize)
     {

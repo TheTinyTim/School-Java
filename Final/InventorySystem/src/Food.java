@@ -2,9 +2,11 @@ public class Food extends InventoryItem {
     
     //Strings
     private String foodType;
+    public String getFoodType () { return foodType; }
     
     //Ints
     private int shelfLife;
+    public int getShelfLife () { return shelfLife; }
     
     public Food (String productName, String productID, double productPrice, String foodType, int shelfLife)
     {
