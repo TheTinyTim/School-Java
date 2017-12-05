@@ -2,9 +2,11 @@ public class Food extends InventoryItem {
     
     //Strings
     private String foodType;
+    public String getFoodType () { return foodType; }
     
     //Ints
     private int shelfLife;
+    public int getShelfLife () { return shelfLife; }
     
     public Food (String productName, String productID, double productPrice, String foodType, int shelfLife)
     {
@@ -21,5 +23,8 @@ public class Food extends InventoryItem {
         this.foodType = foodType;
         this.shelfLife = shelfLife;
     }
+    
+    //This method will take all the relevant data and turn it into a string and return it
+    public String toString () { return getProductID () + " " + name + " " + foodType + " " + shelfLife + " $" + price; }
     
 }
