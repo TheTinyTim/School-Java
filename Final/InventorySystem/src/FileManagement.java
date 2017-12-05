@@ -1,9 +1,12 @@
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -11,6 +14,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.Key;
 import java.util.ArrayList;
 
@@ -34,6 +38,8 @@ public class FileManagement {
         fileCrypto (inventoryFile, Cipher.DECRYPT_MODE);
         //Let's reload the decrypted file
         inventoryFile = new File (rootPath + "\\inventory.xml");
+        //Set up the variable that will store if the file has been corrupted
+        boolean corrupted = false;
     
         //Create the inventory list that will store the items read
         ArrayList<InventoryItem> inventoryItems = new ArrayList<> ();
@@ -46,18 +52,18 @@ public class FileManagement {
             Document xmlDoc = dBuilder.parse (inventoryFile);
             //Let's normalize the file so that there is no weird spaces in it
             xmlDoc.getDocumentElement ().normalize ();
-            
+    
             //Now that we have parsed the file and normalized it let's get all the different nodes of the file
             NodeList foodList = xmlDoc.getElementsByTagName ("food");
             NodeList clothingList = xmlDoc.getElementsByTagName ("clothing");
             NodeList miscList = xmlDoc.getElementsByTagName ("misc");
-            
+    
             //Now let's go through each list and loop through all the items and assign them to their appropriate classes
-            
+    
             //First the food list
             for (int i = 0; i < foodList.getLength (); i++) {
                 Node foodNode = foodList.item (i);
-                
+    
                 //Let's make sure this node is actually an element node
                 if (foodNode.getNodeType () == Node.ELEMENT_NODE) {
                     inventoryItems.add (readFoodItem (foodNode));
@@ -83,7 +89,23 @@ public class FileManagement {
                     inventoryItems.add (readMiscItem (miscNode));
                 }
             }
-        } catch (Exception e) { e.printStackTrace (); }
+        } catch (SAXParseException e) {
+            //This will catch if the file has been tampered with and in turn is corrupted so inform the user and ask if they want to quit the program or continue with a
+            //new save file being created
+            corrupted = true;
+            //Delete the file
+            inventoryFile.delete ();
+            //Reset the inventory items in case something got added to it
+            inventoryItems = new ArrayList<InventoryItem> ();
+            System.out.println ("Oops! Your inventory file seems to have been corrupted.\n" +
+                    "If you've tried editing the file outside of the program please don't do this.\n" +
+                    "Your file will now be deleted.");
+        } catch (ParserConfigurationException | SAXException | IOException e) { e.printStackTrace (); }
+        
+        //Now that we've read all the data from the file let's encrypt the file again so that if the user quits the program in the incorrect way it's still decrypted
+        //Only encrypt the file if the file hasn't been corrupted
+        if (!corrupted)
+            fileCrypto (inventoryFile, Cipher.ENCRYPT_MODE);
         
         return inventoryItems;
     }
@@ -212,6 +234,9 @@ public class FileManagement {
         //Now encrypt the file
         File xmlFile = new File (rootPath + "\\inventory.xml");
         fileCrypto (xmlFile, Cipher.ENCRYPT_MODE);
+        //Now mark the file as read only
+//        xmlFile = new File (rootPath + "\\inventory.xml");
+//        xmlFile.setReadOnly ();
     }
     
     //Let's decrypt or encrypt the file based on the mode passed
