@@ -4,10 +4,11 @@ import java.util.Scanner;
 public class Main {
     
     private static ArrayList<InventoryItem> inventoryItems = new ArrayList<> ();
+    public static void addToInventory (InventoryItem item) { inventoryItems.add (item); }
     
     private static Scanner input;
     
-    private static boolean loop = true;
+    private static boolean mainLoop = true;
     
     public static void main (String[] args)
     {
@@ -95,9 +96,18 @@ public class Main {
         }
     }
     
+    private static void drawInventorySearchMenu (String query)
+    {
+    
+    }
+    
     //This method will handle drawing the function menu as well as interpreting the users key presses and if they correlate to any specific program functionality
     private static void drawFunctionMenu ()
     {
+        //Set up some variables that will later be used in this method
+        boolean menuError = false;
+        String menuErrorMessage = "";
+        
         //Fist let's draw the header of the menu
         System.out.println ("\n");
         System.out.println ("\t\tFunction Menu (Press One Of The Keys Listed)");
@@ -105,35 +115,50 @@ public class Main {
         System.out.println ("\t a: Add Item\td: Delete Item\ts: Search\tq: Quit");
         
         //Let's keep looping until we get an input from the user that actually does something
-        while (loop) {
+        while (mainLoop) {
             //Capture the users input and if it's one of the commands do the correct thing
             System.out.print ("\nWhat would you like to do >> ");
             String userInput = input.next ();
             
             //Now check to see if the user inputted an actual function
             if (userInput.equals ("a")) {
-                //The user is trying to add an item
+                //The user is trying to add an item find out what kind of item they're trying to create
+                ItemCreation.itemCreationMenu (input);
+                //After the user has successfully gone out of the item creation menu break
+                //out of the main menu loop to refresh the inventory menu
+                break;
             } else if (userInput.equals ("d")) {
                 //The user is trying to delete an item
             } else if (userInput.equals ("s")) {
                 //The user is trying to search for an item
             } else if (userInput.equals ("q")) {
                 //The user is trying to quit the program
+                System.out.println ("Saving inventory file do not close the program\n" +
+                        "or edit the save file outside of this program.");
+                
                 FileManagement.saveData (inventoryItems);
-                loop = false;
+                mainLoop = false;
             } else {
                 //This is not a correct function so prompt the user and display the information again
                 System.out.println ("\n\n\n\n");
+                menuErrorMessage = "\nYou didn't enter in a correct menu function!";
+                menuError = true;
                 break;
             }
         }
         
         //Check to see if the program just broke out of the loop instead of it actually ending
-        if (loop) {
+        if (mainLoop) {
             //If it did just break the loop this means the user didn't enter in the correct command so display the menu again and tell them what went wrong
             drawInventoryMenu ();
-            System.out.println ("\nYou didn't enter in a correct menu function!");
+            
+            //Display a error message if something went wrong in this menu
+            if (menuError)
+                System.out.println (menuErrorMessage);
+            
             drawFunctionMenu ();
         }
     }
+    
+    
 }

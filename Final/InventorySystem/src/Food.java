@@ -25,6 +25,6 @@ public class Food extends InventoryItem {
     }
     
     //This method will take all the relevant data and turn it into a string and return it
-    public String toString () { return getProductID () + " " + name + " " + foodType + " " + shelfLife + " $" + price; }
+    public String toString () { return getProductID () + "\t" + name + "\t" + foodType + "\t" + shelfLife + "\t$" + price; }
     
 }
