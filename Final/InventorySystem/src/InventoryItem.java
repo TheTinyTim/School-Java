@@ -48,6 +48,6 @@ public class InventoryItem {
     }
     
     //This method will take all the relevant data and turn it into a string and return it
-    public String toString () { return productID + " " + name + " $" + price; }
+    public String toString () { return productID + "\t" + name + "\t$" + price; }
     
 }
