@@ -14,20 +14,6 @@ public class Main {
     
     public static void main (String[] args)
     {
-        inventoryItems = FileManagement.loadFile ();
-    
-//        InventoryItem item1 = new InventoryItem ("Toothbrush", "M01", 4.99);
-//        Food food1 = new Food ("Banana", "F01", 2.99, "Fruit", 5);
-//        Food food2 = new Food ("Bagels", "F02", 2.99, "Bread", 5);
-//        Clothing clothing1 = new Clothing ("Bootcut Jeans", "C01", 39.99, "Light Blue", "28x32");
-//        Clothing clothing2 = new Clothing ("Long Sleeved Shirt", "C02", 14.99, "Black", "Medium");
-//
-//        inventoryItems.add (item1);
-//        inventoryItems.add (food1);
-//        inventoryItems.add (food2);
-//        inventoryItems.add (clothing1);
-//        inventoryItems.add (clothing2);
-        
         //Lets set up the input object
         input = new Scanner (System.in);
     
