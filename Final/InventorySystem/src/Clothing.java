@@ -1,5 +1,25 @@
-public class Clothing extends InventoryItem {
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+public class Clothing extends InventoryItem {
+    
+    //Static variables/methods
+    
+    //This method will set up a clothing item from an xml node
+    public static InventoryItem setUpFromXML (Node itemNode)
+    {
+        //Convert the node into an element
+        Element element = (Element) itemNode;
+        //Get all the different nodes that would be in a food item node
+        String id = element.getAttribute ("id");
+        String name = element.getElementsByTagName ("name").item (0).getTextContent ();
+        double price = Double.parseDouble (element.getElementsByTagName ("price").item (0).getTextContent ());
+        String color = element.getElementsByTagName ("color").item (0).getTextContent ();
+        String size = element.getElementsByTagName ("size").item (0).getTextContent ();
+    
+        return new Clothing (name, id, price, color, size);
+    }
+    
     //Strings
     private String color;
     public String getColor () { return color; }

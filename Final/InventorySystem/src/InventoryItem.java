@@ -1,3 +1,6 @@
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import java.util.ArrayList;
 
 public class InventoryItem {
@@ -17,6 +20,19 @@ public class InventoryItem {
             return true;
         else
             return false;
+    }
+    
+    //This method will set up a inventory item from an xml node
+    public static InventoryItem setUpFromXML (Node itemNode)
+    {
+        //Convert the node into an element
+        Element element = (Element) itemNode;
+        //Get all the different nodes that would be in a food item node
+        String id = element.getAttribute ("id");
+        String name = element.getElementsByTagName ("name").item (0).getTextContent ();
+        double price = Double.parseDouble (element.getElementsByTagName ("price").item (0).getTextContent ());
+    
+        return new InventoryItem (name, id, price);
     }
     
     //Set up all the needed variables for a base inventory item

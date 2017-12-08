@@ -52,13 +52,18 @@ public class Main {
             ArrayList<Clothing> clothingItems = new ArrayList<> ();
             
             for (InventoryItem item : inventoryItems) {
-                //Lets find out what type of class this item is made from and assign it to the correct list
-                if (item.getClass () == Food.class)
-                    foodItems.add ((Food)item);
-                else if (item.getClass () == Clothing.class)
-                    clothingItems.add ((Clothing)item);
-                else
+                //Lets find out what type of class this item is made from and assign it to the correct list while also only adding items that are in the bounds of the users search query
+                if (item.getClass () == Food.class) {
+                    Food fItem = (Food)item;
+                    if (fItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
+                        foodItems.add (fItem);
+                } else if (item.getClass () == Clothing.class) {
+                    Clothing cItem = (Clothing)item;
+                    if (cItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
+                        clothingItems.add (cItem);
+                } else if (item.toString ().toLowerCase ().contains (userQuery) || userQuery == "") {
                     miscItems.add (item);
+                }
             }
             
             //Now that we have all the items categorized based on the base class it was created from let's go ahead and loop
@@ -71,9 +76,7 @@ public class Main {
                 
                 //Now let's loop through all the items and draw them onto the screen one by one
                 for (Food foodItem : foodItems) {
-                    //Only print stuff out if it matches the search query
-                    if (foodItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
-                        System.out.println ("\t\t\t" + foodItem.toString ());
+                    System.out.println ("\t\t\t" + foodItem.toString ());
                 }
             }
             
@@ -84,9 +87,7 @@ public class Main {
                 
                 //Loop through all the items and add them to the menu
                 for (Clothing clothingItem : clothingItems) {
-                    //Only print stuff out if it matches the search query
-                    if (clothingItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
-                        System.out.println ("\t\t\t" + clothingItem.toString ());
+                    System.out.println ("\t\t\t" + clothingItem.toString ());
                 }
             }
             
@@ -97,9 +98,7 @@ public class Main {
                 
                 //Loop through all the items and add them to the menu
                 for (InventoryItem miscItem : miscItems) {
-                    //Only print stuff out if it matches the search query
-                    if (miscItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
-                        System.out.println ("\t\t\t" + miscItem.toString ());
+                    System.out.println ("\t\t\t" + miscItem.toString ());
                 }
             }
         }
@@ -114,6 +113,13 @@ public class Main {
         
         //Fist let's draw the header of the menu
         System.out.println ("\n");
+        
+        //Display the current users search query
+        if (!userQuery.isEmpty ())
+            System.out.println ("\t\t\t\t\tSearch Query: " + userQuery);
+        else
+            System.out.println ("\t\t\t\t\tSearch Query: None");
+        
         System.out.println ("\t\tFunction Menu (Press One Of The Keys Listed)");
     
         System.out.println ("\t a: Add Item\td: Delete Item\ts: Search\tq: Quit");
@@ -135,13 +141,17 @@ public class Main {
             } else if (userInput.equals ("d")) {
                 //The user is trying to delete an item
                 System.out.print ("Enter in the item ID you wish to delete >> ");
-                userInput = input.nextLine ();
+                userInput = input.nextLine ().toUpperCase ();
                 removeItem (userInput);
                 break;
             } else if (userInput.equals ("s")) {
                 //The user is trying to search for an item
                 //Ask the user what they want to search for
-                System.out.print ("\nWhat would you like to search >> ");
+                if (userQuery.isEmpty ())
+                    System.out.print ("\nWhat would you like to search >> ");
+                else
+                    System.out.print ("\nWhat would you like to search (Enter nothing to end current search) >> ");
+                
                 userQuery = input.nextLine ().toLowerCase ();
                 break;
             } else if (userInput.equals ("q")) {
@@ -173,7 +183,7 @@ public class Main {
         }
     }
     
-    //This method will delete an item with the passed itemID
+    //This method will make sure the user want's to actually delete the item and that that item actually exists
     private static void removeItem (String itemID)
     {
         //First check to make sure that item exists
@@ -189,17 +199,6 @@ public class Main {
         }
     }
     
-    //This method will get an items name based on the id passed
-    private static String getItemName (String id)
-    {
-        for (InventoryItem item : inventoryItems) {
-            if (item.getProductID ().equals (id))
-                return item.name;
-        }
-        
-        return "";
-    }
-    
     //This method will delete an item based on the id passed
     private static void deleteItem (String id)
     {
@@ -211,6 +210,17 @@ public class Main {
         
         //Now remove the item from the list
         inventoryItems.remove (index);
+    }
+    
+    //This method will get an items name based on the id passed
+    private static String getItemName (String id)
+    {
+        for (InventoryItem item : inventoryItems) {
+            if (item.getProductID ().equals (id))
+                return item.name;
+        }
+        
+        return "";
     }
     
     //This will have the program ask the user a yes or no question based on the message sent and return

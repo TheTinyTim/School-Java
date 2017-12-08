@@ -1,4 +1,24 @@
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 public class Food extends InventoryItem {
+    
+    //Static variables/methods
+    
+    //This method will set up a food item from an xml node
+    public static InventoryItem setUpFromXML (Node itemNode)
+    {
+        //Convert the node into an element
+        Element element = (Element) itemNode;
+        //Get all the different nodes that would be in a food item node
+        String id = element.getAttribute ("id");
+        String name = element.getElementsByTagName ("name").item (0).getTextContent ();
+        double price = Double.parseDouble (element.getElementsByTagName ("price").item (0).getTextContent ());
+        String foodType = element.getElementsByTagName ("type").item (0).getTextContent ();
+        int shelfLife = Integer.parseInt (element.getElementsByTagName ("shelflife").item (0).getTextContent ());
+    
+        return new Food (name, id, price, foodType, shelfLife);
+    }
     
     //Strings
     private String foodType;

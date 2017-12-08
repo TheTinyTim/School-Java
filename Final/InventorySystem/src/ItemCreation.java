@@ -43,74 +43,63 @@ public class ItemCreation {
     //This method will handle everything needed to create items to the inventory manager
     private static void createItem (String itemType, Scanner input)
     {
-        //Loop through this part so if the user wants to be able to change any of the data they can
+        //First let's get the base information that will be in every item
+        System.out.print ("Item Name >> ");
+        String itemName = input.nextLine ();
+        
+        //Keep looping through until the user enters in a product ID that doesn't exist
+        String itemID = "";
         while (true) {
-            //First let's get the base information that will be in every item
-            System.out.print ("Item Name >> ");
-            String itemName = input.nextLine ();
+            System.out.print ("Unique Item ID >> ");
+            itemID = input.nextLine ();
+            if (!InventoryItem.checkIfProductIDExists (itemID))
+                break;
+            else
+                System.out.printf ("That product ID: %s already exists! Please enter a different one.\n", itemID);
+        }
+        
+        double itemPrice = onlyNumberEntry ("Item Price", input);
+        input.nextLine ();
+        
+        //Now let's get the specifics of the item being created
+        if (itemType == "food") {
             
-            //Keep looping through until the user enters in a product ID that doesn't exist
-            String itemID = "";
-            while (true) {
-                System.out.print ("Item ID >> ");
-                itemID = input.nextLine ();
-                if (!InventoryItem.checkIfProductIDExists (itemID))
-                    break;
-                else
-                    System.out.printf ("That product ID: %s already exists! Please enter a different one.\n", itemID);
-            }
+            System.out.print ("Type Of Food >> ");
+            String foodType = input.nextLine ();
             
-            System.out.print ("Item Price >> ");
-            double itemPrice = input.nextDouble ();
+            int shelfLife =  (int)onlyNumberEntry ("Shelf Life", input);
             input.nextLine ();
             
-            //Now let's get the specifics of the item being created
-            if (itemType == "food") {
-                
-                System.out.print ("Type Of Food >> ");
-                String foodType = input.nextLine ();
-                
-                System.out.print ("Shelf Life >> ");
-                int shelfLife = input.nextInt ();
-                input.nextLine ();
-                
-                System.out.printf ("ID: %s | Name: %s | Food Type: %s | Shelf Life: %d | Price: $%1.2f\n",
-                        itemID, itemName, foodType, shelfLife, itemPrice);
-                //Check to see if the user wants to re-enter the data
-                if (yesNoQuestion ("Would you like to keep this data?", input)) {
-                    Main.addToInventory (new Food (itemName, itemID, itemPrice, foodType, shelfLife));
-                    //Break out of the loop
-                    break;
-                }
-                
-            } else if (itemType == "clothing") {
-                
-                System.out.print ("Clothing Color >> ");
-                String color = input.nextLine ();
-                
-                System.out.print ("Clothing Size >> ");
-                String size = input.nextLine ();
-                
-                System.out.printf ("ID: %s | Name: %s | Clothing Color: %s | Clothing Size: %s | Price: $%1.2f\n",
-                        itemID, itemName, color, size, itemPrice);
-                //Check to see if the user wants to re-enter the data
-                if (yesNoQuestion ("Would you like to keep this data?", input)) {
-                    Main.addToInventory (new Clothing (itemName, itemID, itemPrice, color, size));
-                    //Break out of the loop
-                    break;
-                }
-                
-            } else if (itemType == "misc") {
-                
-                System.out.printf ("ID: %s | Name: %s | Price: $%1.2f\n", itemID, itemName, itemPrice);
-                //Check to see if the user wants to re-enter the data
-                if (yesNoQuestion ("Would you like to keep this data?", input)) {
-                    Main.addToInventory (new InventoryItem (itemName, itemID, itemPrice));
-                    //Break out of the loop
-                    break;
-                }
-                
+            System.out.printf ("ID: %s | Name: %s | Food Type: %s | Shelf Life: %d | Price: $%1.2f\n",
+                    itemID, itemName, foodType, shelfLife, itemPrice);
+            //Check to see if the user wants to re-enter the data
+            if (yesNoQuestion ("Would you like to keep this data?", input)) {
+                Main.addToInventory (new Food (itemName, itemID, itemPrice, foodType, shelfLife));
             }
+            
+        } else if (itemType == "clothing") {
+            
+            System.out.print ("Clothing Color >> ");
+            String color = input.nextLine ();
+            
+            System.out.print ("Clothing Size >> ");
+            String size = input.nextLine ();
+            
+            System.out.printf ("ID: %s | Name: %s | Clothing Color: %s | Clothing Size: %s | Price: $%1.2f\n",
+                    itemID, itemName, color, size, itemPrice);
+            //Check to see if the user wants to re-enter the data
+            if (yesNoQuestion ("Would you like to keep this data?", input)) {
+                Main.addToInventory (new Clothing (itemName, itemID, itemPrice, color, size));
+            }
+            
+        } else if (itemType == "misc") {
+            
+            System.out.printf ("ID: %s | Name: %s | Price: $%1.2f\n", itemID, itemName, itemPrice);
+            //Check to see if the user wants to re-enter the data
+            if (yesNoQuestion ("Would you like to keep this data?", input)) {
+                Main.addToInventory (new InventoryItem (itemName, itemID, itemPrice));
+            }
+            
         }
     }
     
@@ -128,6 +117,29 @@ public class ItemCreation {
             return true;
         else
             return false;
+    }
+    
+    //This method will make sure the user enters in a number
+    private static double onlyNumberEntry (String message, Scanner input)
+    {
+        //Initialize the variable to return later
+        double userInput;
+        //Start a loop so the user has to keep entering something in until they enter a double in
+        while (true) {
+            System.out.print (message + " >> ");
+            try {
+                //Get the users input
+                userInput = input.nextDouble ();
+                //If the user entered in a number break out of the loop
+                break;
+            } catch (Exception e) {
+                //If the user didn't enter in a number this will catch it and not stop the program out right
+                System.out.println ("You must enter in numbers!\n");
+                input.nextLine ();
+            }
+        }
+        //Now return the users number
+        return userInput;
     }
     
 }

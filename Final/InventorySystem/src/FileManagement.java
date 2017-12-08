@@ -66,7 +66,7 @@ public class FileManagement {
     
                 //Let's make sure this node is actually an element node
                 if (foodNode.getNodeType () == Node.ELEMENT_NODE) {
-                    inventoryItems.add (readFoodItem (foodNode));
+                    inventoryItems.add (Food.setUpFromXML (foodNode));
                 }
             }
     
@@ -76,7 +76,7 @@ public class FileManagement {
     
                 //Let's make sure this node is actually an element node
                 if (clothingNode.getNodeType () == Node.ELEMENT_NODE) {
-                    inventoryItems.add (readClothingItem (clothingNode));
+                    inventoryItems.add (Clothing.setUpFromXML (clothingNode));
                 }
             }
     
@@ -86,7 +86,7 @@ public class FileManagement {
     
                 //Let's make sure this node is actually an element node
                 if (miscNode.getNodeType () == Node.ELEMENT_NODE) {
-                    inventoryItems.add (readMiscItem (miscNode));
+                    inventoryItems.add (InventoryItem.setUpFromXML (miscNode));
                 }
             }
         } catch (SAXParseException e) {
@@ -110,130 +110,92 @@ public class FileManagement {
         return inventoryItems;
     }
     
-    //Create the methods that will load the correct data and store them into their correct classes for all possible inventory items
-    private static InventoryItem readMiscItem (Node node)
-    {
-        //Convert the node into an element
-        Element element = (Element) node;
-        //Get all the different nodes that would be in a food item node
-        String id = element.getAttribute ("id");
-        String name = element.getElementsByTagName ("name").item (0).getTextContent ();
-        double price = Double.parseDouble (element.getElementsByTagName ("price").item (0).getTextContent ());
-        
-        return new InventoryItem (name, id, price);
-    }
-    
-    private static Food readFoodItem (Node node)
-    {
-        //Convert the node into an element
-        Element element = (Element) node;
-        //Get all the different nodes that would be in a food item node
-        String id = element.getAttribute ("id");
-        String name = element.getElementsByTagName ("name").item (0).getTextContent ();
-        double price = Double.parseDouble (element.getElementsByTagName ("price").item (0).getTextContent ());
-        String foodType = element.getElementsByTagName ("type").item (0).getTextContent ();
-        int shelfLife = Integer.parseInt (element.getElementsByTagName ("shelflife").item (0).getTextContent ());
-        
-        return new Food (name, id, price, foodType, shelfLife);
-    }
-    
-    private static Clothing readClothingItem (Node node)
-    {
-        //Convert the node into an element
-        Element element = (Element) node;
-        //Get all the different nodes that would be in a food item node
-        String id = element.getAttribute ("id");
-        String name = element.getElementsByTagName ("name").item (0).getTextContent ();
-        double price = Double.parseDouble (element.getElementsByTagName ("price").item (0).getTextContent ());
-        String color = element.getElementsByTagName ("color").item (0).getTextContent ();
-        String size = element.getElementsByTagName ("size").item (0).getTextContent ();
-        
-        return new Clothing (name, id, price, color, size);
-    }
-    
     //When saving all the product data we will be given a list of InventoryItems which will even contain ALL
     //sub classes of InventoryItem. So it is our job to make sure we find out what type of class and store
     //that information into the save file. We can do this by using the getClass() method
-    //This explains how to use it:
-    // http://javarevisited.blogspot.com/2012/09/how-to-determine-type-of-object-runtime-identification.html
     public static void saveData (ArrayList<InventoryItem> inventoryItems)
     {
-        //Get the root path of the program
-        String rootPath = System.getProperty ("user.dir");
-        
-        try {
-            //Create the object that will give access to the document builder
-            DocumentBuilderFactory fileFactory = DocumentBuilderFactory.newInstance ();
-            DocumentBuilder xmlBuilder = fileFactory.newDocumentBuilder ();
-            
-            //Let's create the root element of the xml file
-            Document doc = xmlBuilder.newDocument ();
-            Element rootElement = doc.createElement ("inventory");
-            doc.appendChild (rootElement);
-            
-            //Now loop through all the inventory items in the array list and create xml elements for it based on the type of class it is
-            for (InventoryItem item : inventoryItems) {
-                //Find out what the main class of the file is and set the element based on the class
-                Element itemElement;
-                if (item.getClass () == Food.class) {
-                    itemElement = doc.createElement ("food");
-                    //Now store all the extra data from the food class
-                    Food fItem = (Food)item;
-                    
-                    Element foodType = doc.createElement ("type");
-                    foodType.appendChild (doc.createTextNode (fItem.getFoodType ()));
-                    itemElement.appendChild (foodType);
-                    
-                    Element shelfLife = doc.createElement ("shelflife");
-                    shelfLife.appendChild (doc.createTextNode (Integer.toString (fItem.getShelfLife ())));
-                    itemElement.appendChild (shelfLife);
-                } else if (item.getClass () == Clothing.class) {
-                    itemElement = doc.createElement ("clothing");
-                    //Now store all the extra data from the clothing class
-                    Clothing cItem = (Clothing)item;
-                    
-                    Element color = doc.createElement ("color");
-                    color.appendChild (doc.createTextNode (cItem.getColor ()));
-                    itemElement.appendChild (color);
-                    
-                    Element size = doc.createElement ("size");
-                    size.appendChild (doc.createTextNode (cItem.getSize ()));
-                    itemElement.appendChild (size);
-                    
-                } else {
-                    itemElement = doc.createElement ("misc");
-                }
-                
-                //Now add all the generic data to the item element
-                //First the attribute of the element
-                Attr attribute = doc.createAttribute ("id");
-                attribute.setValue (item.getProductID ());
-                itemElement.setAttributeNode (attribute);
-                
-                Element name = doc.createElement ("name");
-                name.appendChild (doc.createTextNode (item.name));
-                itemElement.appendChild (name);
-                
-                Element price = doc.createElement ("price");
-                price.appendChild (doc.createTextNode (Double.toString (item.price)));
-                itemElement.appendChild (price);
-                
-                //Now append this element to the root element
-                rootElement.appendChild (itemElement);
-            }
-            
-            //Now let's actually write all this data to an xml file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance ();
-            Transformer transformer = transformerFactory.newTransformer ();
-            DOMSource source = new DOMSource (doc);
-            StreamResult result = new StreamResult (new File (rootPath + "\\inventory.xml"));
-            
-            transformer.transform (source, result);
-        } catch (Exception e) { e.printStackTrace (); }
+        //Only save the file if there is items in the list
+        if (inventoryItems.size () != 0) {
+            //Get the root path of the program
+            String rootPath = System.getProperty ("user.dir");
     
-        //Now encrypt the file
-        File xmlFile = new File (rootPath + "\\inventory.xml");
-        fileCrypto (xmlFile, Cipher.ENCRYPT_MODE);
+            try {
+                //Create the object that will give access to the document builder
+                DocumentBuilderFactory fileFactory = DocumentBuilderFactory.newInstance ();
+                DocumentBuilder xmlBuilder = fileFactory.newDocumentBuilder ();
+        
+                //Let's create the root element of the xml file
+                Document doc = xmlBuilder.newDocument ();
+                Element rootElement = doc.createElement ("inventory");
+                doc.appendChild (rootElement);
+        
+                //Now loop through all the inventory items in the array list and create xml elements for it based on the type of class it is
+                for (InventoryItem item : inventoryItems) {
+                    //Find out what the main class of the file is and set the element based on the class
+                    Element itemElement;
+                    if (item.getClass () == Food.class) {
+                        itemElement = doc.createElement ("food");
+                        //Now store all the extra data from the food class
+                        Food fItem = (Food) item;
+                
+                        Element foodType = doc.createElement ("type");
+                        foodType.appendChild (doc.createTextNode (fItem.getFoodType ()));
+                        itemElement.appendChild (foodType);
+                
+                        Element shelfLife = doc.createElement ("shelflife");
+                        shelfLife.appendChild (doc.createTextNode (Integer.toString (fItem.getShelfLife ())));
+                        itemElement.appendChild (shelfLife);
+                    } else if (item.getClass () == Clothing.class) {
+                        itemElement = doc.createElement ("clothing");
+                        //Now store all the extra data from the clothing class
+                        Clothing cItem = (Clothing) item;
+                
+                        Element color = doc.createElement ("color");
+                        color.appendChild (doc.createTextNode (cItem.getColor ()));
+                        itemElement.appendChild (color);
+                
+                        Element size = doc.createElement ("size");
+                        size.appendChild (doc.createTextNode (cItem.getSize ()));
+                        itemElement.appendChild (size);
+                
+                    } else {
+                        itemElement = doc.createElement ("misc");
+                    }
+            
+                    //Now add all the generic data to the item element
+                    //First the attribute of the element
+                    Attr attribute = doc.createAttribute ("id");
+                    attribute.setValue (item.getProductID ());
+                    itemElement.setAttributeNode (attribute);
+            
+                    Element name = doc.createElement ("name");
+                    name.appendChild (doc.createTextNode (item.name));
+                    itemElement.appendChild (name);
+            
+                    Element price = doc.createElement ("price");
+                    price.appendChild (doc.createTextNode (Double.toString (item.price)));
+                    itemElement.appendChild (price);
+            
+                    //Now append this element to the root element
+                    rootElement.appendChild (itemElement);
+                }
+        
+                //Now let's actually write all this data to an xml file
+                TransformerFactory transformerFactory = TransformerFactory.newInstance ();
+                Transformer transformer = transformerFactory.newTransformer ();
+                DOMSource source = new DOMSource (doc);
+                StreamResult result = new StreamResult (new File (rootPath + "\\inventory.xml"));
+        
+                transformer.transform (source, result);
+            } catch (Exception e) {
+                e.printStackTrace ();
+            }
+    
+            //Now encrypt the file
+            File xmlFile = new File (rootPath + "\\inventory.xml");
+            fileCrypto (xmlFile, Cipher.ENCRYPT_MODE);
+        }
     }
     
     //Let's decrypt or encrypt the file based on the mode passed
