@@ -12,8 +12,8 @@ public class ItemCreation {
         //  o - create a misc item
         //  b - back out of the loop and back to the main menu
         while (true) {
-            System.out.println ("What kind of item would you like to make?\n" +
-                    "f: Food\tc: Clothing\to: Other\tb: Back");
+            System.out.println ("\nWhat kind of item would you like to make?\n" +
+                    "f: Food c: Clothing o: Other b: Back");
             String userInput = input.next ();
             //Now fire a nextLine() so it consumes what next() didn't and the program wont skip the
             //next nextLine()
@@ -57,11 +57,12 @@ public class ItemCreation {
                 if (!InventoryItem.checkIfProductIDExists (itemID))
                     break;
                 else
-                    System.out.printf ("That product ID: %s already exists! Please enter a different one.", itemID);
+                    System.out.printf ("That product ID: %s already exists! Please enter a different one.\n", itemID);
             }
             
             System.out.print ("Item Price >> ");
             double itemPrice = input.nextDouble ();
+            input.nextLine ();
             
             //Now let's get the specifics of the item being created
             if (itemType == "food") {
@@ -71,11 +72,12 @@ public class ItemCreation {
                 
                 System.out.print ("Shelf Life >> ");
                 int shelfLife = input.nextInt ();
+                input.nextLine ();
                 
-                System.out.printf ("ID: %s Name: %s Food Type: %s Shelf Life: %d Price: $%1.2f\n",
+                System.out.printf ("ID: %s | Name: %s | Food Type: %s | Shelf Life: %d | Price: $%1.2f\n",
                         itemID, itemName, foodType, shelfLife, itemPrice);
                 //Check to see if the user wants to re-enter the data
-                if (!yesNoQuestion ("Would you like to change any of the data?", input)) {
+                if (yesNoQuestion ("Would you like to keep this data?", input)) {
                     Main.addToInventory (new Food (itemName, itemID, itemPrice, foodType, shelfLife));
                     //Break out of the loop
                     break;
@@ -89,10 +91,10 @@ public class ItemCreation {
                 System.out.print ("Clothing Size >> ");
                 String size = input.nextLine ();
                 
-                System.out.printf ("ID: %s Name: %s Clothing Color: %s Clothing Size: %s Price: $%1.2f\n",
+                System.out.printf ("ID: %s | Name: %s | Clothing Color: %s | Clothing Size: %s | Price: $%1.2f\n",
                         itemID, itemName, color, size, itemPrice);
                 //Check to see if the user wants to re-enter the data
-                if (!yesNoQuestion ("Would you like to change any of the data?", input)) {
+                if (yesNoQuestion ("Would you like to keep this data?", input)) {
                     Main.addToInventory (new Clothing (itemName, itemID, itemPrice, color, size));
                     //Break out of the loop
                     break;
@@ -100,9 +102,9 @@ public class ItemCreation {
                 
             } else if (itemType == "misc") {
                 
-                System.out.printf ("ID: %s Name: %s Price: $%1.2f", itemID, itemName, itemPrice);
+                System.out.printf ("ID: %s | Name: %s | Price: $%1.2f\n", itemID, itemName, itemPrice);
                 //Check to see if the user wants to re-enter the data
-                if (!yesNoQuestion ("Would you like to change any of the data?", input)) {
+                if (yesNoQuestion ("Would you like to keep this data?", input)) {
                     Main.addToInventory (new InventoryItem (itemName, itemID, itemPrice));
                     //Break out of the loop
                     break;

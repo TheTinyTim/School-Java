@@ -10,6 +10,8 @@ public class Main {
     
     private static boolean mainLoop = true;
     
+    private static String userQuery = "";
+    
     public static void main (String[] args)
     {
         inventoryItems = FileManagement.loadFile ();
@@ -33,7 +35,8 @@ public class Main {
         drawFunctionMenu ();
     }
     
-    //This method handles drawing the inventory menu of the program
+    //This method handles drawing the inventory menu of the program and with a search query so if the user
+    //ever try's to use the search feature it will only show stuff with their query
     private static void drawInventoryMenu ()
     {
         
@@ -68,7 +71,9 @@ public class Main {
                 
                 //Now let's loop through all the items and draw them onto the screen one by one
                 for (Food foodItem : foodItems) {
-                    System.out.println ("\t\t\t" + foodItem.toString ());
+                    //Only print stuff out if it matches the search query
+                    if (foodItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
+                        System.out.println ("\t\t\t" + foodItem.toString ());
                 }
             }
             
@@ -79,7 +84,9 @@ public class Main {
                 
                 //Loop through all the items and add them to the menu
                 for (Clothing clothingItem : clothingItems) {
-                    System.out.println ("\t\t\t" + clothingItem.toString ());
+                    //Only print stuff out if it matches the search query
+                    if (clothingItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
+                        System.out.println ("\t\t\t" + clothingItem.toString ());
                 }
             }
             
@@ -90,15 +97,12 @@ public class Main {
                 
                 //Loop through all the items and add them to the menu
                 for (InventoryItem miscItem : miscItems) {
-                    System.out.println ("\t\t\t" + miscItem.toString ());
+                    //Only print stuff out if it matches the search query
+                    if (miscItem.toString ().toLowerCase ().contains (userQuery) || userQuery == "")
+                        System.out.println ("\t\t\t" + miscItem.toString ());
                 }
             }
         }
-    }
-    
-    private static void drawInventorySearchMenu (String query)
-    {
-    
     }
     
     //This method will handle drawing the function menu as well as interpreting the users key presses and if they correlate to any specific program functionality
@@ -119,6 +123,7 @@ public class Main {
             //Capture the users input and if it's one of the commands do the correct thing
             System.out.print ("\nWhat would you like to do >> ");
             String userInput = input.next ();
+            input.nextLine ();
             
             //Now check to see if the user inputted an actual function
             if (userInput.equals ("a")) {
@@ -129,8 +134,16 @@ public class Main {
                 break;
             } else if (userInput.equals ("d")) {
                 //The user is trying to delete an item
+                System.out.print ("Enter in the item ID you wish to delete >> ");
+                userInput = input.nextLine ();
+                removeItem (userInput);
+                break;
             } else if (userInput.equals ("s")) {
                 //The user is trying to search for an item
+                //Ask the user what they want to search for
+                System.out.print ("\nWhat would you like to search >> ");
+                userQuery = input.nextLine ().toLowerCase ();
+                break;
             } else if (userInput.equals ("q")) {
                 //The user is trying to quit the program
                 System.out.println ("Saving inventory file do not close the program\n" +
@@ -160,5 +173,60 @@ public class Main {
         }
     }
     
+    //This method will delete an item with the passed itemID
+    private static void removeItem (String itemID)
+    {
+        //First check to make sure that item exists
+        if (InventoryItem.checkIfProductIDExists (itemID)) {
+            //The item exists so continue with item deletion
+            //Make sure the user wants to delete this item
+            if (yesNoQuestion ("Are you sure you want to delete " + getItemName (itemID) + "?")) {
+                deleteItem (itemID);
+            }
+        } else {
+            //The item doesn't exist so tell the user and go back to the menu
+            System.out.printf ("The item ID %s doesn't exist.\n\n", itemID);
+        }
+    }
+    
+    //This method will get an items name based on the id passed
+    private static String getItemName (String id)
+    {
+        for (InventoryItem item : inventoryItems) {
+            if (item.getProductID ().equals (id))
+                return item.name;
+        }
+        
+        return "";
+    }
+    
+    //This method will delete an item based on the id passed
+    private static void deleteItem (String id)
+    {
+        int index = 0;
+        for (index = 0; index < inventoryItems.size (); index++) {
+            if (inventoryItems.get (index).getProductID ().equals (id))
+                break;
+        }
+        
+        //Now remove the item from the list
+        inventoryItems.remove (index);
+    }
+    
+    //This will have the program ask the user a yes or no question based on the message sent and return
+    //a boolean based on the users response
+    private static boolean yesNoQuestion (String message)
+    {
+        System.out.println (message + " Y/N");
+        String userInput = input.next ().toUpperCase ();
+        //Now fire a nextLine() so it consumes what next() didn't and the program wont skip the
+        //next nextLine()
+        input.nextLine ();
+        
+        if (userInput.equals ("Y"))
+            return true;
+        else
+            return false;
+    }
     
 }

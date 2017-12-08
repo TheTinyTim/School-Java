@@ -234,9 +234,6 @@ public class FileManagement {
         //Now encrypt the file
         File xmlFile = new File (rootPath + "\\inventory.xml");
         fileCrypto (xmlFile, Cipher.ENCRYPT_MODE);
-        //Now mark the file as read only
-//        xmlFile = new File (rootPath + "\\inventory.xml");
-//        xmlFile.setReadOnly ();
     }
     
     //Let's decrypt or encrypt the file based on the mode passed
